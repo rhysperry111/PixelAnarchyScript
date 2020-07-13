@@ -20,7 +20,7 @@ function testMessage() {
   var element = document.getElementById('messages').lastChild;
   if (element.nodeName == "P") {
     var message = element.innerText;
-    if (regex.test(message)) {
+    if (!regex.test(message)) {
         modifyMessage(element);
     }
   }
@@ -29,7 +29,7 @@ function testMessage() {
 // This function adds a link to the message
 function modifyMessage(element) {
   var coords = parseCoords(element.innerText);
-  element.innerHtml.replace(regex, '<a href="javascript:void(0)" onclick="goToCoords(' + coords[0] + ',' + coords[1] + ')">' + coords[0] + ' ' + coords[1] + '</a>');
+  element.innerHTML = element.innerHTML.replace(regex, '<a href="javascript:void(0)" onclick="goToCoords(' + coords[0] + ',' + coords[1] + ')">' + coords[0] + ' ' + coords[1] + '</a>');
 };
 
 // This function takes in a message and spits out pixel coordinates
