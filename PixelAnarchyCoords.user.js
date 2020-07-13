@@ -11,29 +11,38 @@
 // ==/UserScript==
 
 // Basic test regex
-regex = RegExp('\[\d+ \d+\]');
+var regex = RegExp('\[\d+ \d+\]');
 
 // Ok, I'm gonna need a few funtions
 
 // Firstly let's check if a given message contains coords
-function messageHasCoords(message) {
-  if (regex.test(message)) {
-    return true;
-  } else {
-    return false;
+function testMessage() {
+  var element = document.getElementById('messages').lastChild;
+  if (element.nodeName == "P") {
+    var message = element.innerText;
+    if (regex.test(message)) {
+        modifyMessage(element);
+    }
   }
+};
+
+// This function adds a link to the message
+function modifyMessage(element) {
+  var coords = parseCoords(element.innerText);
+  element.innerHtml.replace(regex, '<a href="javascript:void(0)" onclick="goToCoords(' + coords[0] + ',' + coords[1] + ')">' + coords[0] + ' ' + coords[1] + '</a>');
 };
 
 // This function takes in a message and spits out pixel coordinates
 function parseCoords(message) {
-  TBD;
-};
-// This function adds a link to the message
-function modifyMessage(message {
-  TBD;
+  var x = "testX";
+  var y = "testY";
+  return [x, y];
 };
 
 // This function will be called as part of the link. It should move the canvas
-function goToCoords(coords[]) {
-
+function goToCoords(x, y) {
+  console.log(x);
+  console.log(y);
 }
+
+document.getElementById('messages').addEventListener('DOMNodeInserted', testMessage());
