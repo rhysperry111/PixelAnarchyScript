@@ -11,32 +11,36 @@
 // ==/UserScript==
 
 // Basic test regex
-var regex = RegExp('\[\d+ \d+\]');
+var pat = /\[\d+ \d+\]/;
+var regex = RegExp(pat);
 
 // Ok, I'm gonna need a few funtions
 
 // Firstly let's check if a given message contains coords
-function testMessage() {
-  var element = document.getElementById('messages').lastChild;
-  if (element.nodeName == "P") {
+var testMessage = function() {
+    var element = document.getElementById('messages').lastChild;
+    if (element.nodeName == "BR") {
+        element = element.previousSibling;
+    }
     var message = element.innerText;
-    if (!regex.test(message)) {
+    if (regex.test(message)) {
         modifyMessage(element);
     }
-  }
 };
 
 // This function adds a link to the message
 function modifyMessage(element) {
   var coords = parseCoords(element.innerText);
-  element.innerHTML = element.innerHTML.replace(regex, '<a href="javascript:void(0)" onclick="goToCoords(' + coords[0] + ',' + coords[1] + ')">' + coords[0] + ' ' + coords[1] + '</a>');
+  element.innerHTML = element.innerHTML.replace(regex, '<a class="coordlink" href="javascript:void(0)" onclick="goToCoords(' + coords[0] + ',' + coords[1] + ')">' + coords[0] + ' ' + coords[1] + '</a>');
 };
 
 // This function takes in a message and spits out pixel coordinates
 function parseCoords(message) {
-  var x = "testX";
-  var y = "testY";
-  return [x, y];
+  var fullmatch = message.match(regex)[0];
+  var rawmatch = fullmatch.substring(1, fullmatch.length-1)
+  //some nice regex off of stackoverflow to split at the space
+  var coords = rawmatch.split(" ");
+  return coords;
 };
 
 // This function will be called as part of the link. It should move the canvas
@@ -45,4 +49,7 @@ function goToCoords(x, y) {
   console.log(y);
 }
 
-document.getElementById('messages').addEventListener('DOMNodeInserted', testMessage());
+var targetNode = document.getElementById('messages');
+var config = {childList: true};
+var observer = new MutationObserver(testMessage);
+observer.observe(targetNode, config);
