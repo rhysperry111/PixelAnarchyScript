@@ -38,7 +38,6 @@ function modifyMessage(element) {
 function parseCoords(message) {
   var fullmatch = message.match(regex)[0];
   var rawmatch = fullmatch.substring(1, fullmatch.length-1)
-  //some nice regex off of stackoverflow to split at the space
   var coords = rawmatch.split(" ");
   return coords;
 };
